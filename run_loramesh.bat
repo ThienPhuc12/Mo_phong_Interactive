@@ -1,5 +1,5 @@
 @echo off
-REM Meshtastic Network Simulator - Easy Run Script
+REM Meshtastic LoRa Mesh Simulator - Discrete Event
 REM Author: GitHub Copilot
 REM Date: 2026-01-28
 
@@ -22,14 +22,14 @@ if not exist ".venv" (
     exit /b 1
 )
 
-REM Run the interactive demo
+REM Run the LoRa Mesh simulator
 echo.
 echo ========================================
-echo Starting Meshtastic Network Simulator...
+echo Starting LoRa Mesh Discrete Event Simulator...
 echo ========================================
 echo.
 
-call .venv\Scripts\python.exe interactiveDemo.py
+call .venv\Scripts\python.exe loraMesh.py
 
 if %errorlevel% neq 0 (
     echo.

@@ -1,0 +1,230 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║                  🚀 LAUNCHER GUIDE - ALL SIMULATORS                        ║
+║                                                                            ║
+║              Bạn có 2 simulator để chọn - Chạy bất kỳ lúc nào            ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+📚 2 SIMULATORS AVAILABLE
+═════════════════════════════════════════════════════════════════════════════
+
+1️⃣  INTERACTIVE SIMULATOR (Recommended) ⭐
+    📁 Meshtastic Simulator.lnk
+    File: interactiveDemo.py (1105 lines)
+    
+    Type: GUI-based Physics-Accurate Simulator
+    Features:
+    ✓ Real-time interactive visualization
+    ✓ Double-click to add nodes
+    ✓ Mouse hover to see signal info
+    ✓ Physics-based RSSI/SNR calculation
+    ✓ Explicit mesh routing simulation
+    ✓ 4-type collision detection
+    ✓ Automatic ACK handling
+    
+    Best For:
+    → Learning LoRa mesh networks
+    → Testing network scenarios
+    → Visualizing packet flow
+    → Understanding routing behavior
+    → Education & Research
+
+
+2️⃣  DISCRETE EVENT SIMULATOR
+    📁 LoRa Mesh Simulator.lnk
+    File: loraMesh.py (163 lines)
+    
+    Type: Event-Based Batch Simulator
+    Features:
+    ✓ Batch simulation (no GUI)
+    ✓ Event-driven simulation engine
+    ✓ Asymmetric link setup
+    ✓ Node movement simulation
+    ✓ GPS-enabled nodes
+    ✓ Schedule visualization
+    ✓ Statistical analysis
+    
+    Best For:
+    → Performance testing
+    → Large network simulations
+    → Batch analysis
+    → Statistical evaluation
+    → Research with many nodes
+
+
+═════════════════════════════════════════════════════════════════════════════
+🎯 HOW TO RUN
+═════════════════════════════════════════════════════════════════════════════
+
+OPTION 1: Double-click Shortcut (EASIEST)
+──────────────────────────────────────────
+
+📁 Meshtastic Simulator.lnk          → Interactive GUI Simulator
+              ↓ Double-click
+              ✅ Runs immediately!
+
+📁 LoRa Mesh Simulator.lnk          → Discrete Event Simulator
+              ↓ Double-click
+              ✅ Runs immediately!
+
+
+OPTION 2: Double-click Batch File
+──────────────────────────────────
+
+📁 run_simulator.bat                → Chạy interactiveDemo.py
+📁 run_loramesh.bat                 → Chạy loraMesh.py
+
+
+OPTION 3: Run from Terminal
+─────────────────────────────
+
+Interactive Simulator:
+  cd 'C:\...\Meshtasticator-master'
+  .\.venv\Scripts\python.exe interactiveDemo.py
+
+Discrete Event Simulator:
+  cd 'C:\...\Meshtasticator-master'
+  .\.venv\Scripts\python.exe loraMesh.py
+
+With Parameters:
+  .\.venv\Scripts\python.exe loraMesh.py 5        # 5 nodes
+  .\.venv\Scripts\python.exe loraMesh.py 10       # 10 nodes
+
+
+═════════════════════════════════════════════════════════════════════════════
+⌨️  INTERACTIVE SIMULATOR - KEYBOARD SHORTCUTS
+═════════════════════════════════════════════════════════════════════════════
+
+MOUSE OPERATIONS:
+  🖱️  Double-click on plot      → Add new node
+  🖱️  Single-click node         → Select node
+  🖱️  Hover on arrow            → See signal details (RSSI, SNR, distance)
+
+TEXT INPUT:
+  Type Message ID + Enter       → View message route
+
+MENU BUTTONS:
+  📡 Broadcast                  → Send broadcast from selected node
+  📧 Direct Message             → Send DM to another node
+  🔔 Ping                        → Ping another node
+  🗺️  Traceroute                 → Trace route to another node
+
+
+═════════════════════════════════════════════════════════════════════════════
+📊 STATISTICS PANEL (Top Right)
+═════════════════════════════════════════════════════════════════════════════
+
+Network Stats:
+  - Number of nodes
+  - Data messages & ACKs count
+  - Average reachability
+  - Network coverage %
+  - Collision count
+  - Success rate
+
+Config Info:
+  - Spreading Factor (SF)
+  - Bandwidth (BW)
+  - Sensitivity threshold
+
+
+═════════════════════════════════════════════════════════════════════════════
+🎨 COLOR CODING
+═════════════════════════════════════════════════════════════════════════════
+
+Node Circles:
+  ⭕ Blue           → Client node
+  🟢 Green          → Router node
+  🟡 Yellow         → Repeater node
+  ⭕ Red (outline)  → Selected node
+
+Message Arrows:
+  → Green solid    → Broadcast message
+  → Blue solid     → Direct message
+  → Red dashed     → ACK response
+
+
+═════════════════════════════════════════════════════════════════════════════
+💡 QUICK TIPS
+═════════════════════════════════════════════════════════════════════════════
+
+1. Start with Interactive Simulator for Learning
+   ✓ Easy to see what's happening
+   ✓ Can click and interact in real-time
+   ✓ Visual feedback on all operations
+
+2. Use Discrete Event for Performance Testing
+   ✓ Run many scenarios quickly
+   ✓ Get statistical data
+   ✓ No GUI overhead
+
+3. For Best Results with Interactive:
+   ✓ Place 3-5 nodes in triangle/grid pattern
+   ✓ Space them about 500m apart
+   ✓ Use mix of Router and Client nodes
+   ✓ Observe mesh routing in action
+
+4. Debug Tips:
+   ✓ Check console output for debug messages
+   ✓ Hover arrows to verify signal strength
+   ✓ Use statistics panel to check coverage
+   ✓ View routes to understand relay path
+
+
+═════════════════════════════════════════════════════════════════════════════
+📁 FILE STRUCTURE
+═════════════════════════════════════════════════════════════════════════════
+
+📦 Meshtasticator-master
+ ├─ 📄 Meshtastic Simulator.lnk    ⭐ Click here for Interactive GUI
+ ├─ 📄 LoRa Mesh Simulator.lnk     ⭐ Click here for Batch Simulation
+ ├─ 📄 run_simulator.bat
+ ├─ 📄 run_loramesh.bat
+ ├─ 📄 interactiveDemo.py           (1105 lines - Physics simulator)
+ ├─ 📄 loraMesh.py                  (163 lines - Event simulator)
+ ├─ 📁 lib/
+ │   ├─ phy.py                      (Physics & collision detection)
+ │   ├─ common.py                   (Common utilities)
+ │   ├─ config.py                   (Configuration)
+ │   └─ ...
+ └─ 📁 .venv/                       (Virtual environment)
+
+
+═════════════════════════════════════════════════════════════════════════════
+🚀 RECOMMENDED WORKFLOW
+═════════════════════════════════════════════════════════════════════════════
+
+Step 1: Launch Interactive Simulator
+  → Double-click: "Meshtastic Simulator.lnk"
+
+Step 2: Create Network
+  → Double-click on plot to add 3-5 nodes
+  → Place them in triangle pattern
+
+Step 3: Test Messages
+  → Send Broadcasts
+  → Send Direct Messages
+  → Observe routing & ACKs
+
+Step 4: Analyze Results
+  → Check statistics panel
+  → View message routes
+  → Hover on arrows for details
+
+Step 5: Switch to Batch Testing (Optional)
+  → Use "LoRa Mesh Simulator.lnk" for larger tests
+  → Run multiple scenarios
+
+
+═════════════════════════════════════════════════════════════════════════════
+✅ ALL SET - READY TO GO!
+═════════════════════════════════════════════════════════════════════════════
+
+You have 2 choices:
+
+👉 For Interactive GUI:     Double-click "Meshtastic Simulator.lnk"
+👉 For Batch Simulation:    Double-click "LoRa Mesh Simulator.lnk"
+
+Both are fully functional and verified! Enjoy! 🎉

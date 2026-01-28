@@ -1,5 +1,5 @@
 @echo off
-REM Meshtastic Network Simulator - Easy Run Script
+REM Meshtastic Batch Simulator - Multiple Scenarios
 REM Author: GitHub Copilot
 REM Date: 2026-01-28
 
@@ -22,19 +22,29 @@ if not exist ".venv" (
     exit /b 1
 )
 
-REM Run the interactive demo
+REM Run the batch simulator
 echo.
 echo ========================================
-echo Starting Meshtastic Network Simulator...
+echo Starting Batch Simulator...
+echo ========================================
+echo.
+echo This will run multiple simulation scenarios
+echo with different network configurations.
+echo.
+echo Parameters configured in batchSim.py:
+echo   - Router types: MANAGED_FLOOD
+echo   - Repetitions: 3
+echo   - Node counts: 3, 5, 10, 15, 30
+echo.
 echo ========================================
 echo.
 
-call .venv\Scripts\python.exe interactiveDemo.py
+call .venv\Scripts\python.exe batchSim.py
 
 if %errorlevel% neq 0 (
     echo.
     echo ========================================
-    echo ERROR: Simulator crashed!
+    echo ERROR: Batch simulator crashed!
     echo ========================================
     echo.
     pause
@@ -43,7 +53,7 @@ if %errorlevel% neq 0 (
 
 echo.
 echo ========================================
-echo Simulator closed successfully
+echo Batch simulator completed successfully
 echo ========================================
 echo.
 pause
