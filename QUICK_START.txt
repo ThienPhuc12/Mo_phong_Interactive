@@ -1,0 +1,87 @@
+🎯 QUICK START - Chạy Simulator
+═════════════════════════════════════════════════════════════════
+
+✅ CÁCH 1: Double-click Shortcut (EASIEST)
+────────────────────────────────────────────
+
+1. Nhìn trong thư mục project
+2. Tìm file: "Meshtastic Simulator.lnk" 
+3. Double-click để chạy ngay!
+
+⚡ Simulator sẽ mở lên trong vài giây
+
+
+✅ CÁCH 2: Chạy Batch File
+────────────────────────────
+
+1. Double-click: run_simulator.bat
+2. Simulator sẽ mở ngay
+
+
+✅ CÁCH 3: Chạy từ Terminal
+──────────────────────────
+
+PowerShell:
+  cd 'C:\Users\ADMIN\Downloads\Meshtasticator-master (1)\Meshtasticator-master'
+  .\run_simulator.bat
+
+Hoặc trực tiếp:
+  .\.venv\Scripts\python.exe interactiveDemo.py
+
+
+🎮 SIMULATOR USAGE
+═════════════════════════════════════════════════════════════════
+
+DOUBLE-CLICK NODES:
+  Nhấp đôi trên khu vực trống trong plot để thêm node
+
+SINGLE-CLICK NODE:
+  Chọn node để xem chi tiết
+
+MOUSE OVER ARROWS:
+  Hover chuột trên mũi tên để xem thông tin tín hiệu
+
+MESSAGE ID LOOKUP:
+  Nhập message ID ở TextBox dưới để xem route
+
+BROADCAST:
+  Nhấn B, chọn node sender → broadcast message
+
+DIRECT MESSAGE:
+  Nhấn D, chọn sender → chọn receiver → DM
+
+ACK AUTO-SEND:
+  ACK được gửi tự động khi node nhận message
+
+
+📊 PANEL CHỈ TIÊU
+═════════════════════════════════════════════════════════════════
+
+TOP RIGHT (Statistics):
+  - Tổng nodes, messages, ACKs
+  - Tỷ lệ thành công
+  - Coverage % 
+  - Config hiện tại
+
+MIDDLE RIGHT (Messages):
+  - Danh sách message IDs
+  - Trạng thái nhận
+
+BOTTOM RIGHT (Routes):
+  - Chi tiết routing
+  - Từng hop relay
+
+
+💡 TIPS
+═════════════════════════════════════════════════════════════════
+
+✓ Đặt nodes thành hình tam giác hoặc lưới để test mesh routing
+✓ Sử dụng 3+ nodes để thấy relay/routing hoạt động
+✓ Quan sát màu mũi tên: xanh=broadcast, xanh dương=DM, đỏ=ACK
+✓ Xem console để debug message flow
+
+
+🚀 READY TO GO!
+═════════════════════════════════════════════════════════════════
+
+Bấm vào shortcut "Meshtastic Simulator.lnk" để bắt đầu! 🎉
