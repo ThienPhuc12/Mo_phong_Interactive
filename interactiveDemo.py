@@ -44,7 +44,8 @@ class InteractiveDemo:
         gs = self.fig.add_gridspec(3, 3, hspace=0.3, wspace=0.3)
         self.ax_main = self.fig.add_subplot(gs[0:3, 0:2])
         self.ax_stats = self.fig.add_subplot(gs[0, 2])
-        self.ax_messages = self.fig.add_subplot(gs[1, 2])
+        # Messages dùng add_axes để điều chỉnh vị trí y
+        self.ax_messages = self.fig.add_axes([0.67, 0.1, 0.25, 0.35])
         self.ax_routes = self.fig.add_subplot(gs[2, 2])
         
         self.nodes = []
