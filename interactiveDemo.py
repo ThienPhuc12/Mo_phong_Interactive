@@ -793,11 +793,19 @@ Config:
                     linestyle = '-'
                 
                 # Draw arrow immediately for basic visualization
+                # Red curves UP (less), Blue curves DOWN (more)
+                if color == 'red':
+                    connectionstyle = "arc3,rad=0.1"
+                elif color == 'blue':
+                    connectionstyle = "arc3,rad=-0.2"
+                else:  # green
+                    connectionstyle = "arc3,rad=0"
+                    
                 arrow = FancyArrowPatch((sender['x'], sender['y']), 
                                       (node['x'], node['y']),
                                       arrowstyle='->', mutation_scale=20,
                                       color=color, alpha=0.6, linewidth=2,
-                                      linestyle=linestyle)
+                                      linestyle=linestyle, connectionstyle=connectionstyle)
                 self.ax_main.add_patch(arrow)
                 self.route_lines.append(arrow)
                 self.fig.canvas.draw_idle()
@@ -951,8 +959,13 @@ Receivers ({len(receivers)}):
                     else:
                         color, linestyle = 'blue', '-'
                 
-                # Create arc-style arrow
-                rad_value = arc_count * 0.15  # Increase radius for each additional arrow
+                # Create arc-style arrow: red curves up (less), blue curves down (more)
+                if color == 'red':
+                    rad_value = 0.1  # Less curve UP
+                elif color == 'blue':
+                    rad_value = -0.2  # More curve DOWN
+                else:  # green
+                    rad_value = 0
                 connectionstyle = f"arc3,rad={rad_value}"
                 
                 arrow = FancyArrowPatch(
