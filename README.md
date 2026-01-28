@@ -10,7 +10,7 @@ After a simulation, it plots the placement of nodes and time schedule for each s
 
 ![](/img/placement_schedule.png)
 
-It can be used to analyze the network for a set of parameters. For example, these are the results of 100 simulations of 200s with a different hop limit and number of nodes. As expected, the average number of nodes reached for each generated message increases as the hop limit increases. 
+It can be used to analyze the network for a set of parameters. For example, these are the results of 100 simulations of 200s with a different hop limit and number of nodes. As expected, the average number of nodes reached for each generated message increases as the hop limit increases. .
 
 ![](/img/reachability_hops.png)
 
