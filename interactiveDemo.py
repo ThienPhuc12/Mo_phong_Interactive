@@ -56,6 +56,7 @@ class InteractiveDemo:
         self.route_lines = []
         self.route_arrows = []  # Store FancyArrowPatch objects for hover
         self.route_annots = []  # Store annotations for hover
+        self.arrow_info = []  # Store sender/receiver info for hover detection
         self.current_message_view = None
         self.sim_time = 0
         
@@ -247,9 +248,9 @@ Config:
     
     def _frequency_collision(self, p1, p2):
         """Check frequency collision"""
-        if abs(p1.freq - p2.freq) <= 120 and (p1.bw == 500 or p2.bw == 500):
+        if abs(p1.freq - p2.freq) <= 120 and (p1.bw == 500 or p2.freq == 500):
             return True
-        elif abs(p1.freq - p2.freq) <= 60 and (p1.bw == 250 or p2.bw == 250):
+        elif abs(p1.freq - p2.freq) <= 60 and (p1.bw == 250 or p2.freq == 250):
             return True
         elif abs(p1.freq - p2.freq) <= 30:
             return True
@@ -367,17 +368,41 @@ Config:
         """Handle hover over arrows to show annotations"""
         if event.inaxes != self.ax_main:
             return
-            
+        
+        if len(self.route_arrows) == 0 or len(self.route_annots) == 0:
+            return
+        
         found = False
+        
+        # Try using contains() method like in lib/interactive.py
         for i, arrow in enumerate(self.route_arrows):
             if i < len(self.route_annots):
                 annot = self.route_annots[i]
-                cont, _ = arrow.contains(event)
-                if cont:
-                    annot.set_visible(True)
-                    found = True
-                    self.fig.canvas.draw_idle()
-                    break
+                try:
+                    # Method 1: Use contains() like in lib/interactive.py
+                    cont, _ = arrow.contains(event)
+                    if cont:
+                        annot.set_visible(True)
+                        found = True
+                        self.fig.canvas.draw_idle()
+                        break
+                except (AttributeError, TypeError):
+                    # Fallback: If contains() fails, use distance calculation
+                    if hasattr(self, 'arrow_info') and i < len(self.arrow_info):
+                        info = self.arrow_info[i]
+                        sender = info['sender']
+                        receiver = info['receiver']
+                        
+                        if event.xdata is not None and event.ydata is not None:
+                            x1, y1 = sender['x'], sender['y']
+                            x2, y2 = receiver['x'], receiver['y']
+                            dist = self.point_to_segment_distance(event.xdata, event.ydata, x1, y1, x2, y2)
+                            
+                            if dist < 150:  # Hover threshold in data coordinates
+                                annot.set_visible(True)
+                                found = True
+                                self.fig.canvas.draw_idle()
+                                break
         
         if not found:
             # Hide all annotations if not hovering over any arrow
@@ -386,12 +411,35 @@ Config:
                     annot.set_visible(False)
                     self.fig.canvas.draw_idle()
     
+    def point_to_segment_distance(self, px, py, x1, y1, x2, y2):
+        """Calculate distance from point (px, py) to line segment (x1,y1)-(x2,y2)"""
+        # Vector from (x1,y1) to (x2,y2)
+        dx = x2 - x1
+        dy = y2 - y1
+        
+        if dx == 0 and dy == 0:
+            # Segment is a point
+            return np.sqrt((px - x1)**2 + (py - y1)**2)
+        
+        # Parameter t of the point projection
+        t = max(0, min(1, ((px - x1)*dx + (py - y1)*dy) / (dx*dx + dy*dy)))
+        
+        # Closest point on segment
+        closest_x = x1 + t * dx
+        closest_y = y1 + t * dy
+        
+        # Distance
+        return np.sqrt((px - closest_x)**2 + (py - closest_y)**2)
+    
     def on_key(self, event):
         """Handle key events"""
         if event.key == 'c':
             self.clear_all()
         elif event.key == 'r':
             self.clear_routes()
+        elif event.key == 'a':
+            # Show all paths
+            self.show_all_routes()
         elif event.key == 'd':
             if self.selected_node is not None:
                 self.dm_mode = True
@@ -878,6 +926,130 @@ Config:
         self.update_displays()
         return success
         
+    def show_all_routes(self):
+        """Show all message routes at once"""
+        if len(self.messages) == 0:
+            print("⚠️  No messages to display")
+            return
+            
+        # Clear previous routes
+        self.clear_routes()
+        
+        print(f'\n📍 Displaying all {len(self.messages)} message routes...')
+        print('Hover over arrows to see details.')
+        
+        # Initialize arrow_info list to store sender/receiver info for hover detection
+        self.arrow_info = []
+        
+        # Track arrow counts between node pairs to create arc effect
+        pair_counts = {}
+        
+        # Process all messages
+        for msg_data in self.messages:
+            msg = msg_data['message']
+            sender = msg_data['sender']
+            receivers = msg_data['receivers']
+            
+            for ri, receiver in enumerate(receivers):
+                # Determine arc radius based on how many arrows between this pair
+                pair_key = (sender['id'], receiver['id'])
+                if pair_key not in pair_counts:
+                    pair_counts[pair_key] = 0
+                pair_counts[pair_key] += 1
+                arc_count = pair_counts[pair_key]
+                
+                # Determine color based on message type
+                if msg.get('is_ack', False):
+                    color, linestyle = 'red', '--'
+                elif msg['destination'] == 'BROADCAST':
+                    color, linestyle = 'green', '-'
+                else:
+                    color, linestyle = 'blue', '-'
+                
+                # Create arc-style arrow
+                if color == 'red':
+                    rad_value = 0.1  # Less curve UP
+                elif color == 'blue':
+                    rad_value = -0.2  # More curve DOWN
+                else:  # green
+                    rad_value = 0
+                connectionstyle = f"arc3,rad={rad_value}"
+                
+                arrow = FancyArrowPatch(
+                    (sender['x'], sender['y']),
+                    (receiver['x'], receiver['y']),
+                    arrowstyle='->', 
+                    mutation_scale=20,
+                    connectionstyle=connectionstyle,
+                    color=color,
+                    linestyle=linestyle,
+                    alpha=0.7,
+                    linewidth=2.5
+                )
+                self.ax_main.add_patch(arrow)
+                self.route_arrows.append(arrow)
+                
+                # Store arrow info for hover detection
+                self.arrow_info.append({
+                    'sender': sender,
+                    'receiver': receiver,
+                    'msg': msg,
+                    'msg_data': msg_data
+                })
+                
+                # Determine message type
+                if msg.get('is_ack', False):
+                    if msg['sender'] == receiver['id']:
+                        msg_type = "Implicit ACK"
+                    else:
+                        msg_type = "Real ACK"
+                elif msg['sender'] == sender['id']:
+                    msg_type = "Original message"
+                else:
+                    if msg['destination'] == 'BROADCAST':
+                        msg_type = "Rebroadcast"
+                    else:
+                        msg_type = "Forwarding message"
+                
+                # Create annotation
+                rssi_val = msg_data['rssi_values'][ri] if ri < len(msg_data['rssi_values']) else 0
+                snr_val = rssi_val - self.conf.NOISE_LEVEL
+                
+                dest_text = msg['destination'] if msg['destination'] != 'BROADCAST' else 'All'
+                portnum = msg.get('portnum', 'TEXT_MESSAGE_APP')
+                
+                annotation_text = (
+                    f"Msg ID: {msg['id']}\n"
+                    f"Type: {msg_type}\n"
+                    f"From: Node {sender['id']}\n"
+                    f"To: Node {receiver['id']}\n"
+                    f"Dest: {dest_text}\n"
+                    f"RSSI: {rssi_val:.1f} dBm\n"
+                    f"SNR: {snr_val:.1f} dB"
+                )
+                
+                # Position annotation at midpoint
+                mid_x = (sender['x'] + receiver['x']) / 2
+                mid_y = (sender['y'] + receiver['y']) / 2 + 100
+                
+                annot = self.ax_main.annotate(
+                    annotation_text,
+                    xy=(mid_x, mid_y),
+                    xytext=(mid_x, mid_y),
+                    bbox=dict(boxstyle="round,pad=0.5", fc=color, alpha=0.3, ec=color),
+                    fontsize=8,
+                    visible=False
+                )
+                self.route_annots.append(annot)
+        
+        self.ax_main.set_title(f'All Routes ({len(self.messages)} messages) - Hover over arrows for details', 
+                              fontsize=12, fontweight='bold')
+        self.fig.canvas.draw_idle()
+        
+        # Update stats display
+        self.update_displays()
+        print(f"✅ Created {len(self.route_arrows)} route arrows with {len(self.route_annots)} annotations ready for hover")
+        
     def show_message_route(self, msg_idx):
         """Show message route details (simple version)"""
         if msg_idx >= len(self.messages):
@@ -1051,6 +1223,9 @@ Receivers ({len(receivers)}):
             annot.remove()
         self.route_annots = []
         
+        if hasattr(self, 'arrow_info'):
+            self.arrow_info = []
+        
         self.ax_main.set_title('Meshtastic Network Simulator (Physics-Accurate) - Double click to place nodes',
                               fontsize=14, fontweight='bold')
         self.fig.canvas.draw()
@@ -1068,6 +1243,7 @@ Receivers ({len(receivers)}):
         self.route_lines = []
         self.route_arrows = []
         self.route_annots = []
+        self.arrow_info = []
         self.current_message_view = None
         self.sim_time = 0
         if hasattr(self, '_temp_arrow_colors'):
@@ -1102,6 +1278,7 @@ Receivers ({len(receivers)}):
         print("  • Left-click to select (yellow)")
         print("  • Right-click to broadcast")
         print("  • Press 'd' then click to send DM")
+        print("  • Press 'a' to show all routes")
         print("  • Press 'c' to clear all")
         print("  • Press 'r' to clear routes")
         print("  • Press 1-9 to view message details")
